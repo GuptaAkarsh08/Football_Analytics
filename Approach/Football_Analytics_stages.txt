@@ -1,0 +1,154 @@
+Phase 1 — Ingestion
+Football APIs
+
+What it does: This is your primary data source. You call REST endpoints from football-data.org and StatsBomb to pull match results, player stats, standings, and event-level data (passes, shots, dribbles with x/y coordinates).
+
+Why it matters: Every data pipeline starts with ingestion. In your Sight Machine role, data comes from Kafka topics tied to industrial assets. Here, you're learning the other common pattern — polling external APIs on a schedule. This is how 80% of data ingestion works in companies that consume third-party data (financial feeds, SaaS APIs, partner data).
+
+What you'll learn: Rate limiting strategies, API pagination, error handling and retries, JSON parsing at scale, and designing an ingestion layer that doesn't break when the source API changes its schema.
+
+Interview relevance: "How do you handle a source API that's rate-limited to 10 req/min but you need data from 12 leagues?" — this is a real system design question.
+
+CDC / Debezium
+
+What it does: Change Data Capture. You set up a PostgreSQL database with a players table (name, club, salary, contract). When you update a row — say, "Mbappé moves from PSG to Real Madrid" — Debezium watches the Postgres write-ahead log (WAL) and pushes that change event to Kafka automatically. You never query the database for changes; changes come to you.
+
+Why it matters: CDC is the backbone of real-time data in enterprise. At Netflix, when a user changes their profile, that change propagates to dozens of downstream systems via CDC. At D.E. Shaw, trade events flow through CDC pipelines. This is the single most important ingestion pattern you're currently missing.
+
+What you'll learn: Log-based CDC vs query-based CDC, Debezium connectors, how WAL replication works, exactly-once delivery semantics, and how CDC events differ from regular API responses (they carry the before and after state of a row).
+
+Connection to your work: At Sight Machine you integrate assets from Kafka — CDC is how many of those assets get into Kafka in the first place. Understanding Debezium gives you the full picture.
+
+Web Scraping
+
+What it does: Supplements the APIs by pulling data that isn't available through official endpoints — things like Transfermarkt player market values, FBref advanced stats, or historical data not covered by free API tiers.
+
+Why it matters: In real projects, you rarely get all your data from clean APIs. Scraping teaches you to handle messy, unstructured data — which is exactly what your Teradata background involved (getting unstructured raw data and transforming it through Python). This block bridges your old skill with a new context.
+
+What you'll learn: BeautifulSoup/Scrapy, handling anti-scraping measures, scheduling scrapes responsibly, and the ethics of scraping (respecting robots.txt, rate limiting yourself).
+
+Freelancing relevance: Many US clients need "get data from this website into our warehouse" — this is a common freelance engagement.
+
+Apache Kafka
+
+What it does: The central nervous system. Every data source pushes its data into Kafka topics — raw.matches, raw.players, raw.transfers, raw.live-events. Kafka holds the data durably and lets multiple consumers read from it independently. Spark Streaming reads from it, batch jobs read from it, and the data quality layer can read from it too — all without interfering with each other.
+
+Why it matters: You already work with Kafka at Sight Machine, so you know the basics. But in this project, you own the topic design — deciding how to partition data, how many partitions per topic, what the key strategy is (do you key by team_id, match_id, or league?), and how retention policies work.
+
+What you'll learn at a deeper level: Consumer groups (multiple consumers reading the same topic for different purposes), Kafka Connect (for Debezium integration), partition strategies and their impact on downstream processing, and handling late-arriving data.
+
+The key design decision: Keying raw.matches by match_id ensures all events for one match land on the same partition — which means Spark Structured Streaming can process them in order without shuffles. This is the kind of decision interviewers love asking about.
+
+Schema Registry
+
+What it does: Sits alongside Kafka and stores the Avro (or JSON Schema) definition for each topic. When a producer writes to raw.matches, the Schema Registry validates that the data conforms to the registered schema. When a consumer reads, it knows exactly what fields to expect.
+
+Why it matters: Without a schema registry, your pipeline breaks silently when the football API adds a new field or changes a data type. With it, you get schema evolution — the ability to add new fields (like xG being added to match data) without breaking existing consumers. This is forward and backward compatibility.
+
+What you'll learn: Avro serialization (why it's preferred over JSON for Kafka), schema compatibility modes (BACKWARD, FORWARD, FULL), and how schema evolution prevents production incidents. This directly maps to the "Schema Evolution & Schema Registry" item on your learning roadmap.
+
+Real-world parallel: At Sight Machine, when a new tag gets added to an asset, that's essentially schema evolution. Understanding the registry gives you a framework for handling that cleanly.
+
+Phase 2 — Processing
+Spark Streaming
+
+What it does: Reads continuously from Kafka topics (especially raw.live-events) using Spark Structured Streaming. Processes live match data in near-real-time — windowed aggregations like "goals in the last 15 minutes", "possession percentage updated every 30 seconds", or "running xG total for an ongoing match."
+
+Why it matters: This is the biggest technical gap between your current role and a Netflix-level position. Spark is non-negotiable for senior data engineering roles at top companies. Structured Streaming specifically teaches you the unified batch-streaming model — the same DataFrame API works for both, which is exactly the philosophy behind Delta Lake and the lakehouse.
+
+What you'll learn: Spark Structured Streaming concepts (triggers, watermarks, output modes), checkpointing for fault tolerance, windowed aggregations, handling late data with watermarks, and the difference between processing time vs event time.
+
+Why it's here and not in Phase 1: You need Kafka running first before you can consume from it. The streaming job depends on topics being populated.
+
+Spark Batch
+
+What it does: Runs on a schedule (daily, triggered by Airflow) to process historical data. Reads completed match data, player season stats, and transfer records. Performs heavy transformations — joins across multiple sources, deduplication, SCD Type 2 updates on player dimensions, and aggregations that don't make sense in a streaming context (like "player's season average rating").
+
+Why it matters: Batch processing is still 70–80% of what data engineers do, even at companies with real-time pipelines. The key skill is knowing when to use batch vs streaming. Live match events? Streaming. End-of-season player rankings? Batch. Transfer window analysis? Batch. This judgment is what separates senior from junior.
+
+What you'll learn: PySpark deeply — partitioning, shuffle optimization, broadcast joins (e.g., broadcasting the small dim_teams table when joining with the large fct_matches table), Spark UI for debugging slow jobs, and writing idempotent batch jobs that produce the same output whether run once or ten times.
+
+Connection to your background: Your Teradata + Python/Pandas batch pipeline experience maps directly here. The concepts are the same — read, transform, write — but the tool scales to terabytes instead of gigabytes.
+
+Phase 3 — Storage (Medallion Architecture)
+Bronze Layer
+
+What it does: Stores raw data exactly as it arrived from the sources — raw JSON from the football API, Avro from Kafka, raw HTML from scraping. No transformations, no cleaning. This is your "append-only truth" — if anything goes wrong downstream, you can always come back here and reprocess.
+
+Why it matters: The Bronze layer is insurance. If a bug in your Silver transformation drops records, you don't need to re-pull from the API (which might have rate limits or data retention windows). You replay from Bronze. This pattern is used at every company running a lakehouse — Netflix, Uber, Airbnb all have a raw/Bronze layer.
+
+What you'll learn: Delta Lake fundamentals — writing data in Delta format, understanding the transaction log (_delta_log), append vs overwrite semantics, and partition strategies (partition Bronze by ingestion_date and source for efficient reprocessing).
+
+Data stored here: Raw match JSON with all fields (even ones you don't need yet), raw player stats, raw CDC events from Debezium (including the before and after payloads).
+
+Silver Layer
+
+What it does: Cleaned, validated, and typed data. Takes the messy Bronze data and applies: data type casting (strings to timestamps, strings to integers), deduplication, null handling, field renaming to a consistent naming convention, and joining related records. A match record in Silver has proper datetime columns, integer scores, and foreign keys to team and competition tables.
+
+Why it matters: This is where data engineering craftsmanship shows. The Silver layer is the difference between "we have data" and "we have reliable data." It's also where most data quality checks run — is the row count reasonable? Are there unexpected nulls? Did the API return garbage?
+
+What you'll learn: Data cleaning patterns at scale (in Spark, not Pandas), schema enforcement in Delta Lake (it rejects writes that don't match the expected schema), and the concept of data contracts — a formal agreement about what Silver data looks like, so downstream consumers (analysts, dbt models) can trust it.
+
+This is your Sight Machine work leveled up: You already clean and prepare data for dashboards. Here you're formalizing that process with Delta Lake's schema enforcement and making it reproducible.
+
+Gold Layer
+
+What it does: Business-ready data modeled in a star schema. This is where your dimensional model lives — fct_matches, fct_player_match_stats, fct_transfers as fact tables, and dim_players, dim_teams, dim_competitions, dim_dates as dimension tables. Analysts and dashboards query Gold directly.
+
+Why it matters: This is the most interview-tested block in the entire architecture. When an interviewer says "design a data model for X", they're asking you to design the Gold layer. Kimball dimensional modeling, star schema, fact vs dimension, granularity, SCD — all of this lives here.
+
+What you'll learn: Dimensional modeling (the biggest gap in your current skillset), star schema design, choosing the right grain for each fact table (one row per match? per player per match? per event?), and how dbt models produce these Gold tables.
+
+Example: fct_player_match_stats has one row per player per match. Its grain is player-match. It joins to dim_players (which is SCD Type 2, so you can see that Mbappé was at PSG in season X and Real Madrid in season Y) and dim_dates (which lets you filter by matchday, season, or week).
+
+Phase 4 — Transformation + Orchestration
+dbt
+
+What it does: Manages all the SQL transformations from Silver → Gold. Instead of writing Python scripts that run SQL, you write SQL models in .sql files organized in a folder structure: staging/ (Silver mappings), intermediate/ (business logic), marts/ (Gold tables). dbt handles dependency ordering, runs tests, and auto-generates documentation with lineage graphs.
+
+Why it matters: dbt is the most in-demand tool in the modern data stack right now. It's used by thousands of companies and is a top-3 skill on freelance job postings for data engineers. It also teaches you to think in layers — which directly maps to how you'd explain your pipeline in an interview.
+
+What you'll learn: dbt models, refs, sources, seeds, snapshots (for SCD Type 2), macros (reusable SQL logic), tests (schema tests + custom data tests), documentation, and how dbt integrates with Delta Lake/Databricks.
+
+Freelancing goldmine: "Set up dbt for our data warehouse" is one of the most common and well-paying freelance engagements for US clients. Understanding it deeply gives you an immediate revenue stream.
+
+Airflow
+
+What it does: Orchestrates everything. Each pipeline phase is a DAG (Directed Acyclic Graph) in Airflow. dag_daily_ingest runs the API pulls → dag_spark_batch waits for ingestion to complete (using a sensor), then runs Spark jobs → dag_dbt_transform runs after Spark completes → dag_data_quality runs after dbt. If any step fails, Airflow retries it, and if it keeps failing, it alerts you.
+
+Why it matters: Orchestration is what separates a collection of scripts from a production pipeline. At Sight Machine, something is triggering your pipelines — Airflow is the industry standard for that. At Netflix, their orchestrator (Maestro) works on the same principles as Airflow.
+
+What you'll learn: DAG design, task dependencies, sensors (wait for a file, wait for another DAG), XComs (passing data between tasks), SLA monitoring ("if this DAG hasn't finished by 8am, alert"), backfills (re-running a DAG for a specific date range), and the TaskFlow API for writing DAGs in Python.
+
+Data Quality (Great Expectations)
+
+What it does: Runs automated checks after every dbt run. Validates that fact tables have the expected number of rows, no null primary keys, values within expected ranges (a player can't have more than 120 minutes in a match), and statistical distributions haven't shifted dramatically (if La Liga suddenly has 25 teams instead of 20, something broke upstream).
+
+Why it matters: Data quality is what separates a senior DE from a mid-level one. Anyone can build a pipeline — building one that tells you when it's wrong is the hard part. In the demo UI you saw, the pipeline health tab showed 3 failing checks — that's this block catching real issues before they reach dashboards.
+
+What you'll learn: Great Expectations suites, expectation types (column-level, table-level, distribution-level), integration with Airflow (running checks as DAG tasks), and the concept of data observability.
+
+Phase 5 — Serving + Governance
+Dashboards (Metabase / Superset)
+
+What it does: Visualizes the Gold layer data — league standings, player comparison charts, match analysis dashboards, transfer tracking. This is the "Overview" and "Match center" tabs from the demo UI, but powered by live queries against your Delta Lake Gold tables.
+
+Why it matters: You already build dashboards at Sight Machine. This block is less about learning and more about showcasing. A beautiful dashboard backed by a well-engineered pipeline is the most convincing portfolio piece for both interviews and freelance clients.
+
+REST API (FastAPI)
+
+What it does: Exposes your Gold layer as API endpoints — /api/matches?team=real_madrid, /api/players/vinicius-jr/stats. This makes your data consumable by any frontend, mobile app, or third-party integration.
+
+Why it matters: Shows you can build a full data product, not just a pipeline. This is the "data product" concept from the Data Mesh philosophy. It demonstrates that you think about data consumers, not just data producers.
+
+RAG / LLM (Match Insights)
+
+What it does: The AI layer. Ingests match reports and commentary text, embeds them into a vector database, and lets users ask natural language questions that combine structured data (from Gold tables) with unstructured context (from match reports). "How has Bellingham's role changed?" pulls stats from fct_player_match_stats AND retrieves relevant commentary for context.
+
+Why it matters: This is your differentiator. Most data engineers can build a pipeline. Very few can build a pipeline that feeds an intelligent AI layer. This skill commands premium freelancing rates and sets you apart in interviews at top companies where AI integration is a priority.
+
+DataHub (Lineage, Catalog, Contracts)
+
+What it does: Registers every table in your platform, auto-generates lineage (which tables feed which), documents column-level metadata, and enforces data contracts between layers. When someone asks "where does the xG number on the dashboard come from?", DataHub traces it from Gold → dbt model → Silver → Bronze → Kafka topic → football API.
+
+Why it matters: At senior level, you're expected to think about governance, not just engineering. Knowing how to set up data cataloging and lineage tracking shows you care about the whole ecosystem, not just your pipeline. This is what makes the difference between a Senior and a Staff Data Engineer.
