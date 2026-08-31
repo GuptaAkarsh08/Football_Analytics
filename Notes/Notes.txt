@@ -1,0 +1,14 @@
+Date - 31st August 2026
+Zookeeper - Its a Kafka Manager which keeps tracks of all the topics Kafka has, Keep track of which brokers are alive and who is the leader Etc.
+            We never interact with Zookeper Directly. Its just sits in the background.
+
+1.1 - Topic = A topic is a category/folder where messages are stored. Think of it like a WhatsApp group — raw.matches is one group where all match data goes, raw.players is another group for player data. Producers send messages to a specific group, consumers read from that group.
+
+1.2 - Brokers = A broker is a Kafka server that stores the data. Right now you have 1 broker (KAFKA_BROKER_ID: 1). Netflix might have 100+ brokers. 
+Think of brokers as hard drives — more brokers = more storage and more capacity to handle traffic. Each broker holds some portion of the topics.
+
+1.3 - Leader = When a topic has copies across multiple brokers (for safety), one broker is the "leader" for that topic. All reads and writes go through the leader. The others are "followers" — they just keep backup copies. If the leader dies, a follower gets promoted to leader automatically. Since we have only 1 broker, it's the leader for everything.
+
+1.4 - A topic is split into partitions. Think of it like lanes on a highway — more lanes = more cars can move simultaneously. raw.matches might have 3 partitions so 3 consumers can read in parallel. Messages with the same key (like team_id) always go to the same partition, keeping them in order.
+
+
