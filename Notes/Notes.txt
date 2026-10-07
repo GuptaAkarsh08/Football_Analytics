@@ -12,3 +12,5 @@ Think of brokers as hard drives — more brokers = more storage and more capacit
 1.4 - A topic is split into partitions. Think of it like lanes on a highway — more lanes = more cars can move simultaneously. raw.matches might have 3 partitions so 3 consumers can read in parallel. Messages with the same key (like team_id) always go to the same partition, keeping them in order.
 
 
+
+

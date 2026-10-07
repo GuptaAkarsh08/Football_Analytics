@@ -1,0 +1,36 @@
+Historian - 
+
+1 - Leagues
+    1: Year wise Standings of Different Leagues
+    2: Stats Of League Of Different League
+    3: League Top Scorers
+    4: League Top Assists
+    5: League Top Yellow Cards
+    6: League Top Red Cards
+    7: League Top Fouls
+    8: League Top Offsides
+    9: League Top Saves
+    10: League Top Corners
+    11: League Top Fouls
+
+2 - Teams
+    1: Stats of all Teams from all different Leagues
+    2: Upcoming Matches Of all Teams
+    3: Matches Played Of all Teams
+
+3 - Matches
+    1: Matches Completed (Year wise,League Wise)
+    2: Matches Upcoming (Year wise,League Wise)
+    3: Head 2 Head Matches of Two Teams
+
+4 - Player
+    1: Player Details
+    2: Player Stats
+    3: Player Matches
+    4: Player History
+
+
+Live Data - 
+    1: Current Matches
+    2: Real TIme Stats of all Current Matches
+    3: Live Commentary of all Current Matches

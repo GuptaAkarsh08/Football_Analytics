@@ -36,3 +36,34 @@ Commands To Run Kafka-
                                          --bootstrap-server localhost:9092
 
 (Command) Send a Message and read it block - docker exec -it kafka kafka-console-producer --topic raw.matches --bootstrap-server localhost:9092
+
+
+
+-- 10th Sept notes
+
+KAFKA — BREAK + NOTE SUMMARY (Sep 10)
+
+Test 1 — Consumed from non-existent topic
+Result: UNKNOWN_TOPIC_OR_PARTITION, retried continuously
+Why: KAFKA_AUTO_CREATE_TOPICS_ENABLE=false — prevents silent typo-topics in production
+
+Test 2 — Consumer without --from-beginning
+Result: only shows NEW messages, ignores old ones already in the topic
+Why: offset determines where a consumer starts reading, not whether data exists
+
+Test 3 (unplanned) — Retention expiry
+Result: messages from Aug 31 disappeared by Sep 10 (10 days later)
+Why: Kafka default retention = 7 days, auto-deletes old messages regardless of read status
+
+Test 4 — Stop/restart Kafka container
+Result: first attempt failed (TimeoutException) — Kafka wasn't ready yet after docker start
+Fix: added sleep before reconnecting
+Why: "container running" ≠ "service ready" — same problem Airflow sensors solve
+
+Kafka concepts (pizza analogy):
+- Partition = zone splitting a topic for parallel processing
+- Replication Factor = backup stores per zone (durability)
+- Leader = the one store actively serving a partition right now
+- Replicas = leader + all backup copies
+- Isr = backups that are fully caught up, safe to promote
+- __consumer_offsets = shared tracker of what each consumer has read so far

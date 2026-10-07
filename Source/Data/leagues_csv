@@ -1,0 +1,158 @@
+name,code,type
+WC Qualification CAF,QCAF,CUP
+Primera B Nacional,,LEAGUE
+Liga Profesional,ASL,LEAGUE
+Copa Liga Profesional,,LEAGUE
+Supercopa Argentina,,SUPER_CUP
+WC Qualification AFC,QAFC,CUP
+A League,AAL,LEAGUE
+FFA Cup,,CUP
+Erste Liga,,LEAGUE
+Bundesliga,ABL,LEAGUE
+Playoffs 1/2,APL,PLAYOFFS
+ÖFB Cup,,CUP
+Coupe de Belgique,,CUP
+Division 1B,,LEAGUE
+Jupiler Pro League,BJL,LEAGUE
+Supercoupe de Belgique,,SUPER_CUP
+Playoffs II,,PLAYOFFS
+LFPB,,LEAGUE
+Premier Liga,,LEAGUE
+Copa do Brasil,,CUP
+Série D,,LEAGUE
+Série C,,LEAGUE
+Campeonato Brasileiro Série B,BSB,LEAGUE
+Campeonato Brasileiro Série A,BSA,LEAGUE
+Kupa na Bulgarija,,CUP
+A PFG,,LEAGUE
+Canadian Championship,,LEAGUE
+Playoffs 1/2,,PLAYOFFS
+Supercopa de Chile,,SUPER_CUP
+Primera División,CPD,LEAGUE
+Chinese Super League,CSL,LEAGUE
+Liga Postobón,CLP,LEAGUE
+Superliga de Colombia,,CUP
+Prva Liga,PRVA,LEAGUE
+Synot Liga,,LEAGUE
+DBU Pokalen,,CUP
+Superliga,DSU,LEAGUE
+Euro League - Playoff,DELP,PLAYOFFS
+Copa Pilsener Serie A,,LEAGUE
+Football League Cup,FLC,CUP
+FA Community Shield,COM,SUPER_CUP
+FA Cup,FAC,CUP
+National League,ENL,LEAGUE
+League Two,EL2,LEAGUE
+League One,EL1,LEAGUE
+Championship,ELC,LEAGUE
+Premier League,PL,LEAGUE
+Meistriliiga,,LEAGUE
+UEFA Europa League,EL,CUP
+UEFA Champions League,CL,CUP
+UEFA Conference League,UCL,CUP
+European Championship,EC,CUP
+UEFA Women's EURO,,CUP
+WC Qualification UEFA,QUFA,CUP
+Suomen Cup,,CUP
+Veikkausliiga,VEI,LEAGUE
+Coupe de la Ligue,,CUP
+Ligue 2,FL2,LEAGUE
+Ligue 1,FL1,LEAGUE
+Coupe de France,,CUP
+Playoffs 1/2,,PLAYOFFS
+Playoffs 2/3,,PLAYOFFS
+Trophée des Champions,,CUP
+DFB-Pokal,DFB,CUP
+Regionalliga,REG,LEAGUE
+3. Bundesliga,BL3,LEAGUE
+2. Bundesliga,BL2,LEAGUE
+Bundesliga,BL1,LEAGUE
+Frauen Bundesliga,,LEAGUE
+Relegation Bundesliga,BLREL,CUP
+DFL Super Cup,GSC,SUPER_CUP
+Greek Cup,,CUP
+Super League,GSL,LEAGUE
+Souper Kap Ellados,,LEAGUE
+Magyar Kupa,,CUP
+NB I,HNB,LEAGUE
+Úrvalsdeild,,LEAGUE
+I-League,,LEAGUE
+Ligat ha'Al,ILH,LEAGUE
+Supercoppa,,SUPER_CUP
+Coppa Italia,CIT,CUP
+Serie C,ISC,LEAGUE
+Serie B,SB,LEAGUE
+Serie A,SA,LEAGUE
+J.League Cup,,CUP
+J. League Division 2,,LEAGUE
+J. League,JJL,LEAGUE
+Super Cup,,SUPER_CUP
+Virslīga,,LEAGUE
+A Lyga,,LEAGUE
+Premier League,,LEAGUE
+SuperCopa MX,,SUPER_CUP
+Copa MX,,CUP
+Liga MX,LMX,LEAGUE
+KNVB Beker,KNV,CUP
+Eerste Divisie,DJL,LEAGUE
+Eredivisie,DED,LEAGUE
+Johan Cruijff Schaal,,SUPER_CUP
+League Cup,,CUP
+Premiership,,LEAGUE
+Tippeligaen,TIP,LEAGUE
+1. divisjon,,LEAGUE
+Playoffs 1/2,,PLAYOFFS
+WC Qualification OFC,QOFC,CUP
+Liga Panameña de Fútbol,,LEAGUE
+Primera División,PPD,LEAGUE
+Superpuchar Polski,,SUPER_CUP
+Puchar Polski,,CUP
+Taça de Portugal,,CUP
+Liga2 Cabovisão,,LEAGUE
+Primeira Liga,PPL,LEAGUE
+Supertaça Cândido de Oliveira,,SUPER_CUP
+Premier Division,,LEAGUE
+Liga II,,LEAGUE
+Liga I,RL1,LEAGUE
+Supercupa României,,SUPER_CUP
+Russian Cup,,CUP
+FNL,,LEAGUE
+RFPL,RFPL,LEAGUE
+Russian Super Cup,,SUPER_CUP
+Playoffs 1/2,,PLAYOFFS
+Scottish Cup,,CUP
+Championship,,LEAGUE
+Premier League,SPL,LEAGUE
+Playoffs 2/3,,SUPER_CUP
+ABSA Premiership,,LEAGUE
+Copa Libertadores,CLI,CUP
+Copa America,CA,CUP
+Copa Sudamericana,,CUP
+WC Qualification CONMEBOL,QCBL,CUP
+Copa del Rey,CDR,CUP
+Segunda División,SD,LEAGUE
+Primera Division,PD,LEAGUE
+Supercopa de España,,SUPER_CUP
+Superettan,,LEAGUE
+Allsvenskan,ALL,LEAGUE
+Playoffs 1/2,,PLAYOFFS
+Svenska Supercupen,,LEAGUE
+Playoffs 2/3,,PLAYOFFS
+Schweizer Pokal,,CUP
+Super League,SSL,LEAGUE
+1. Lig,,LEAGUE
+Süper Lig,TSL,LEAGUE
+TFF Süper Kupa,,SUPER_CUP
+Kubok Ukrainy,,CUP
+Premier Liha,UPL,LEAGUE
+Superkubok Ukrainy,,SUPER_CUP
+Playoffs 1/2,,PLAYOFFS
+MLS,MLS,LEAGUE
+Primera División,,LEAGUE
+Supercopa Uruguaya,SUCU,SUPER_CUP
+Primera División,,LEAGUE
+V-League,,LEAGUE
+Welsh Premier League,,LEAGUE
+FIFA World Cup,WC,CUP
+WC Qualification CONCACAF,QCCF,CUP
+Summer Olympics,OLY,CUP
