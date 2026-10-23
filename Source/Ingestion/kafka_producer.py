@@ -32,11 +32,24 @@ if __name__ == "__main__":
         if matches:
             for match in matches["matches"]:
                 pusher.send("raw.matches", match["id"], match)
-
+        else:
+            print(f"[SKIP] Matches for {competition}")
         standings = api.get_standings(competition)
-    if standings:
-        pusher.send("raw.standings", competition, standings)
+        if standings:
+            pusher.send("raw.standings", competition, standings)
+        else:
+            print(f"[SKIP] Standings for {competition}")
     # ... same for scorers, teams
-    time.sleep(7)
+        scorers = api.get_scorers(competition)
+        if scorers:
+            pusher.send("raw.scorers",competition,scorers)
+        else:
+            print(f"[SKIP] Scorers for {competition}")
+        teams = api.get_teams(competition)
+        if teams:
+            pusher.send("raw.teams",competition,teams)
+        else:
+            print(f"[SKIP] Teams for {competition}")
+        time.sleep(25)
 
-pusher.flush()
+    pusher.flush()
